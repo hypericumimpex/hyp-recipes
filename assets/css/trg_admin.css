@@ -1,0 +1,81 @@
+/**
+ * trg_admin.css
+ *
+ * @since 1.0.4
+ * @version 1.7.0
+ */
+
+@font-face {
+	font-family: 'icomoon';
+	src:  url('../fonts/icomoon.eot?o6qcht');
+	src:  url('../fonts/icomoon.eot?o6qcht#iefix') format('embedded-opentype'),
+		url('../fonts/icomoon.ttf?o6qcht') format('truetype'),
+		url('../fonts/icomoon.woff?o6qcht') format('woff'),
+		url('../fonts/icomoon.svg?o6qcht#icomoon') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+[class^="icn-"],
+[class*=" icn-"],
+.recipe-heading:before,
+.ing-list > li:before {
+	/* use !important to prevent issues with browser extensions that change fonts */
+	font-family: 'icomoon' !important;
+	speak: none;
+	font-style: normal;
+	font-weight: normal;
+	font-variant: normal;
+	text-transform: none;
+	line-height: 1;
+
+	/* Better Font Rendering =========== */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+.icn-print:before {
+  content: "\f02f";
+}
+.icn-twitter:before {
+  content: "\f099";
+}
+.icn-facebook:before {
+  content: "\f09a";
+}
+.icn-facebook-f:before {
+  content: "\f09a";
+}
+.icn-pinterest:before {
+  content: "\f0d2";
+}
+.icn-google-plus:before {
+  content: "\f0d5";
+}
+.icn-envelope:before {
+  content: "\f0e0";
+}
+.icn-linkedin:before {
+  content: "\f0e1";
+}
+.icn-vk:before {
+  content: "\f189";
+}
+.icn-reddit:before {
+  content: "\f1a1";
+}
+.icn-whatsapp:before {
+  content: "\f232";
+}
+.icn-check:before {
+  content: "\e5ca";
+}
+.icn-restaurant_menu:before {
+  content: "\e561";
+}
+.icn-restaurant:before {
+  content: "\e56c";
+}
+.icn-shopping_basket2:before {
+  content: "\e8cb";
+}
