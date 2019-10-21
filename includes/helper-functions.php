@@ -4,7 +4,7 @@
  *
  * @package Total_Recipe_Generator_El
  * @since 1.0.0
- * @version 1.7.0
+ * @version 1.9.0
  */
 
 
@@ -85,7 +85,19 @@ if ( ! function_exists ( 'trg_el_create_diet_items' ) ) :
 			return;
 		}
 
-		$allowed_schema = apply_filters( 'trg_allowed_diet_schema', array( 'Diabetic', 'Gluten Free', 'Halal', 'Hindu', 'Kosher', 'Low Calorie', 'Low Fat', 'Low Lactose', 'Low Salt', 'Vegan', 'Vegetarian' ) );
+		$allowed_schema = apply_filters( 'trg_allowed_diet_schema', array(
+				__( 'Diabetic', 'trg_el' ) ,
+                __( 'Gluten Free', 'trg_el' ),
+                __( 'Halal', 'trg_el' ),
+                __( 'Hindu', 'trg_el' ),
+                __( 'Kosher', 'trg_el' ),
+                __( 'Low Calorie', 'trg_el' ),
+                __( 'Low Fat', 'trg_el' ),
+                __( 'Low Lactose', 'trg_el' ),
+                __( 'Low Salt', 'trg_el' ),
+                __( 'Vegan', 'trg_el' ),
+                __( 'Vegetarian', 'trg_el' )
+		) );
 
 		$sfda = $sfdo = array();
 		$rcu_out = '';
@@ -454,7 +466,7 @@ if ( ! function_exists( 'trg_el_post_thumbnail_caption' ) ) {
 /**
  * Create attributes list from user defined values
  *
- * @since 1.7.0
+ * @since 1.9.0
  */
 if ( ! function_exists ( 'trg_el_create_atts' ) ) :
 	function trg_el_create_atts( $list_other = '', $link = false ) {

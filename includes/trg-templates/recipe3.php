@@ -7,7 +7,7 @@
  *
  * @package Total_Recipe_Generator_El
  * @since 1.0.0
- * @version 1.7.0
+ * @version 1.9.0
  */
 
 $meta = '';
@@ -224,7 +224,7 @@ echo '<div class="trg-recipe" itemscope itemtype="http://schema.org/Recipe">';
 
 			/**
 			 * User defined custom meta
-			 * @since 1.7.0
+			 * @since 1.9.0
 			 */
 			if ( isset( $cust_meta ) && is_array( $cust_meta ) ) {
 				foreach ( $cust_meta as $meta ) {
@@ -288,7 +288,7 @@ echo '<div class="trg-recipe" itemscope itemtype="http://schema.org/Recipe">';
 
 			/**
 			 * User defined custom recipe attributes
-			 * @since 1.7.0
+			 * @since 1.9.0
 			 */
 			if ( isset( $cust_attr ) && is_array( $cust_attr ) ) {
 				foreach ( $cust_attr as $attr ) {
@@ -996,7 +996,7 @@ echo '<div class="trg-recipe" itemscope itemtype="http://schema.org/Recipe">';
 
 	/**
 	 * Add Video Schema
-	 * @since 1.7.0
+	 * @since 1.9.0
 	 */
 
 	if ( isset( $vid_url ) && '' != $vid_url ) {

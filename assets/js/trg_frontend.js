@@ -2,7 +2,7 @@
  * trg_frontend.js
  *
  * @package Total_Recipe_Generator_El
- * @version 1.7.0
+ * @version 1.9.0
  */
 jQuery(function ($) {
     'use strict';

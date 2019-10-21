@@ -4,7 +4,7 @@
  * Author:      Hypericum
  * Author URI: 	https://github.com/hypericumimpex
  * Plugin URI:  https://github.com/hypericumimpex/hyp-recipes
- * Version:     1.7.0
+ * Version:     1.9.0
  * Text Domain: trg_el
  * Domain Path: /languages/
  * Description: Extensie pt. HYP Page Builder. Pluginul te ajută să creezi retete online cu microdate Schema, tabel cu date nutritionale si microdate Schema .
@@ -36,7 +36,7 @@ if ( ! class_exists( 'Total_Recipe_Generator_El' ) ) {
 			// Load translation
 			add_action( 'init', array( &$this, 'trg_init' ) );
 
-			// HYP Page Builder Specific			
+			// Elementor Specific			
 			add_action( 'elementor/widgets/widgets_registered', array( &$this, 'trg_widgets_registered' ) );
 			add_action( 'admin_notices',  array( &$this, 'trg_install_el_notice' ) );
 			add_action( 'elementor/editor/after_enqueue_scripts', array( &$this, 'trg_admin_scripts' ) );			

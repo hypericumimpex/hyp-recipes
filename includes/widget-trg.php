@@ -526,17 +526,17 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'label' => __( 'Recipe Cuisine', 'trg_el' ),
             'type' => Controls_Manager::SELECT2,
             'options' => apply_filters( 'trg_cuisine_list', [
-                    'American' => __( 'American', 'trg_el' ),
-                    'Chinese' => __( 'Chinese', 'trg_el' ),
-                    'French' => __( 'French', 'trg_el' ),
-                    'Indian' => __( 'Indian', 'trg_el' ),
-                    'Italian' => __( 'Italian', 'trg_el' ),
-                    'Japanese' => __( 'Japanese', 'trg_el' ),
-                    'Mediterranean' => __( 'Mediterranean', 'trg_el' ),
-                    'Mexican' => __( 'Mexican', 'trg_el' ),
+                    __( 'American', 'trg_el' ) => __( 'American', 'trg_el' ),
+                    __( 'Chinese', 'trg_el' ) => __( 'Chinese', 'trg_el' ),
+                    __( 'French', 'trg_el' ) => __( 'French', 'trg_el' ),
+                    __( 'Indian', 'trg_el' ) => __( 'Indian', 'trg_el' ),
+                    __( 'Italian', 'trg_el' ) => __( 'Italian', 'trg_el' ),
+                    __( 'Japanese', 'trg_el' ) => __( 'Japanese', 'trg_el' ),
+                    __( 'Mediterranean', 'trg_el' ) => __( 'Mediterranean', 'trg_el' ),
+                    __( 'Mexican', 'trg_el' ) => __( 'Mexican', 'trg_el' ),
                 ]
             ),
-            'default' => ['American', 'French'],
+            'default' => [ __( 'American', 'trg_el' ), __( 'French', 'trg_el' ) ],
             'description' => __( 'Select recipe cuisine from above list or use custom field below', 'trg_el' ),
             'multiple' => true
         ]
@@ -558,14 +558,14 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
         'label' => __( 'Course', 'trg_el' ),
         'type' => Controls_Manager::SELECT2,
         'options' => apply_filters( 'trg_category_list', [
-            'Appetizer' => __( 'Appetizer', 'trg_el' ),
-            'Breakfast' => __( 'Breakfast', 'trg_el' ),
-            'Dessert' => __( 'Dessert', 'trg_el' ),
-            'Drinks' => __( 'Drinks', 'trg_el' ),
-            'Main Course' => __( 'Main Course', 'trg_el' ),
-            'Salad' => __( 'Salad', 'trg_el' ),
-            'Snack' => __( 'Snack', 'trg_el' ),
-            'Soup' => __( 'Soup', 'trg_el' ),
+            __( 'Appetizer', 'trg_el' ) => __( 'Appetizer', 'trg_el' ),
+            __( 'Breakfast', 'trg_el' ) => __( 'Breakfast', 'trg_el' ),
+            __( 'Dessert', 'trg_el' ) => __( 'Dessert', 'trg_el' ),
+            __( 'Drinks', 'trg_el' ) => __( 'Drinks', 'trg_el' ),
+            __( 'Main Course', 'trg_el' ) => __( 'Main Course', 'trg_el' ),
+            __( 'Salad', 'trg_el' ) => __( 'Salad', 'trg_el' ),
+            __( 'Snack', 'trg_el' ) => __( 'Snack', 'trg_el' ),
+            __( 'Soup', 'trg_el' ) => __( 'Soup', 'trg_el' ),
             ]
         ),
         'default' => ['Appetizer', 'Breakfast'],
@@ -623,19 +623,19 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'label' => __( 'Suitable for Diet', 'trg_el' ),
             'type' => Controls_Manager::SELECT2,
             'options' => [
-                'Diabetic' => __( 'Diabetic', 'trg_el' ),
-                'Gluten Free' => __( 'Gluten Free', 'trg_el' ),
-                'Halal' => __( 'Halal', 'trg_el' ),
-                'Hindu' => __( 'Hindu', 'trg_el' ),
-                'Kosher' => __( 'Kosher', 'trg_el' ),
-                'Low Calorie' => __( 'Low Calorie', 'trg_el' ),
-                'Low Fat' => __( 'Low Fat', 'trg_el' ),
-                'Low Lactose' => __( 'Low Lactose', 'trg_el' ),
-                'Low Salt' => __( 'Low Salt', 'trg_el' ),
-                'Vegan' => __( 'Vegan', 'trg_el' ),
-                'Vegetarian' => __( 'Vegetarian', 'trg_el' ),
+                __( 'Diabetic', 'trg_el' ) => __( 'Diabetic', 'trg_el' ),
+                __( 'Gluten Free', 'trg_el' ) => __( 'Gluten Free', 'trg_el' ),
+                __( 'Halal', 'trg_el' ) => __( 'Halal', 'trg_el' ),
+                __( 'Hindu', 'trg_el' ) => __( 'Hindu', 'trg_el' ),
+                __( 'Kosher', 'trg_el' ) => __( 'Kosher', 'trg_el' ),
+                __( 'Low Calorie', 'trg_el' ) => __( 'Low Calorie', 'trg_el' ),
+                __( 'Low Fat', 'trg_el' ) => __( 'Low Fat', 'trg_el' ),
+                __( 'Low Lactose', 'trg_el' ) => __( 'Low Lactose', 'trg_el' ),
+                __( 'Low Salt', 'trg_el' ) => __( 'Low Salt', 'trg_el' ),
+                __( 'Vegan', 'trg_el' ) => __( 'Vegan', 'trg_el' ),
+                __( 'Vegetarian', 'trg_el' ) => __( 'Vegetarian', 'trg_el' ),
             ],
-            'default' => ['Vegetarian', 'Low Salt'],
+            'default' => [ __( 'Vegetarian', 'trg_el' ), __( 'Low Salt', 'trg_el' ) ],
             'description' => __( 'Select diet for which this recipe is suitable. Remove selection using "ctrl + select" if not applicable.', 'trg_el' ),
             'multiple' => true
         ]
@@ -1610,6 +1610,24 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     );
 
     $this->add_control(
+        'recipe_title_tag',
+        [
+            'label' => __( 'Recipe Title Tag', 'trg_el' ),
+            'type' => Controls_Manager::SELECT,
+            'options' => [
+                'h1' => __( 'h1', 'trg_el' ),
+                'h2' => __( 'h2', 'trg_el' ),
+                'h3' => __( 'h3', 'trg_el' ),
+                'h4' => __( 'h4', 'trg_el' ),
+                'h5' => __( 'h5', 'trg_el' ),
+                'p' => __( 'p', 'trg_el' ),
+                'span' => __( 'span', 'trg_el' ),
+            ],
+            'default' => 'h2'
+        ]
+    );
+
+    $this->add_control(
         'title_color',
         [
             'label' => __( 'Title color', 'trg_el' ),
@@ -2131,6 +2149,15 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
         ]
     );
 
+    $this->add_group_control(
+        Group_Control_Typography::get_type(),
+        [
+            'label' => __( 'Recipe Method Typography', 'trg_el' ),
+            'name' => 'method_typography',
+            'selector' => '{{WRAPPER}} .step-content',
+        ]
+    );
+
     $this->end_controls_section();
 
 }
@@ -2248,6 +2275,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'ad_spot_1'         => '',
             'ad_spot_2'         => '',
             'ad_spot_3'         => '',
+            'recipe_title_tag'  => 'h2',
 
             // Colors
             'icon_color'        => '',
