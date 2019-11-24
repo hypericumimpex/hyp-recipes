@@ -4,7 +4,7 @@
  *
  * @package Total_Recipe_Generator_El
  * @since 1.0.0
- * @version 1.9.0
+ * @version 2.2.1
  */
 
 
@@ -85,21 +85,35 @@ if ( ! function_exists ( 'trg_el_create_diet_items' ) ) :
 			return;
 		}
 
-		$allowed_schema = apply_filters( 'trg_allowed_diet_schema', array(
-				__( 'Diabetic', 'trg_el' ) ,
-                __( 'Gluten Free', 'trg_el' ),
-                __( 'Halal', 'trg_el' ),
-                __( 'Hindu', 'trg_el' ),
-                __( 'Kosher', 'trg_el' ),
-                __( 'Low Calorie', 'trg_el' ),
-                __( 'Low Fat', 'trg_el' ),
-                __( 'Low Lactose', 'trg_el' ),
-                __( 'Low Salt', 'trg_el' ),
-                __( 'Vegan', 'trg_el' ),
-                __( 'Vegetarian', 'trg_el' )
-		) );
+		$diet_labels = [
+                'DiabeticDiet' => __( 'Diabetic', 'trg_el' ),
+                'GlutenFreeDiet' => __( 'Gluten Free', 'trg_el' ),
+                'HalalDiet' => __( 'Halal', 'trg_el' ),
+                'HinduDiet' => __( 'Hindu', 'trg_el' ),
+                'KosherDiet' => __( 'Kosher', 'trg_el' ),
+                'LowCalorieDiet' => __( 'Low Calorie', 'trg_el' ),
+                'LowFatDiet' => __( 'Low Fat', 'trg_el' ),
+                'LowLactoseDiet' => __( 'Low Lactose', 'trg_el' ),
+                'LowSaltDiet' => __( 'Low Salt', 'trg_el' ),
+                'VeganDiet' => __( 'Vegan', 'trg_el' ),
+                'VegetarianDiet' => __( 'Vegetarian', 'trg_el' )
+		];
 
-		$sfda = $sfdo = array();
+		$allowed_diet_schema = apply_filters( 'trg_allowed_diet_schema', [
+                'DiabeticDiet',
+                'GlutenFreeDiet',
+                'HalalDiet',
+                'HinduDiet',
+                'KosherDiet',
+                'LowCalorieDiet',
+                'LowFatDiet',
+                'LowLactoseDiet',
+                'LowSaltDiet',
+                'VeganDiet',
+                'VegetarianDiet'
+		] );
+
+		$sfda = $sfdo = $links_arr = array();
 		$rcu_out = '';
 		$return_arr = array();
 
@@ -112,28 +126,37 @@ if ( ! function_exists ( 'trg_el_create_diet_items' ) ) :
 		if ( '' !== $list_other ) {
 			$sfdo = explode( ',', $list_other );
 		}
-		$rcu = array_merge( $sfda, $sfdo );
+
+		$chosen_sfd = [];
+		foreach ( $sfda as $key ) {
+		    if ( array_key_exists( $key, $diet_labels ) ) {
+		        $chosen_sfd[ $key ] = $diet_labels[ $key ];
+		    }
+		}
+
+		$rcu = array_merge( $chosen_sfd, $sfdo );
 
 		if ( is_array( $rcu ) && ! empty( $rcu ) ) {
-			foreach( $rcu as $rcu_item ) {
-				$sfd = str_replace( ' ', '', $rcu_item );
-				$rcu_item = trim( $rcu_item );
+			foreach( $rcu as $key => $val ) {
+				//$sfd = str_replace( ' ', '', $val );
+				//$val = trim( $val );
 				$schema_prop = '';
-				if ( in_array( $rcu_item, $allowed_schema ) ) {
-					$schema_prop = '<link itemprop="suitableForDiet" href="http://schema.org/' . $sfd . 'Diet" />';
+				if ( ! is_numeric( $key ) && in_array( $key, $allowed_diet_schema ) ) {
+					$schema_prop = '<link itemprop="suitableForDiet" href="http://schema.org/' . $key . '" />';
+					$links_arr[] = 'http://schema.org/' . $key;
 				}
 
 				if ( $link ) {
-					$tag_link = get_term_by( 'name', $rcu_item, 'post_tag' );
-					$cat_link = get_term_by( 'name', $rcu_item, 'category' );
+					$tag_link = get_term_by( 'name', $val, 'post_tag' );
+					$cat_link = get_term_by( 'name', $val, 'category' );
 
 					// Check if a tag is available
 					if ( isset( $tag_link->term_id ) ) {
 						$rcu_out .= sprintf( '<li class="cm-value link-enabled">%1$s<a href="%2$s" title="%3$s" target="_blank">%4$s</a></li>',
 							$schema_prop,
 							get_term_link( $tag_link->term_id, 'post_tag' ),
-							sprintf( __( 'View all recipies tagged %s', 'trg_el' ), $rcu_item ),
-							$rcu_item
+							sprintf( __( 'View all recipies tagged %s', 'trg_el' ), $val ),
+							$val
 						);
 					}
 
@@ -142,8 +165,8 @@ if ( ! function_exists ( 'trg_el_create_diet_items' ) ) :
 						$rcu_out .= sprintf( '<li class="cm-value link-enabled">%1$s<a href="%2$s" title="%3$s" target="_blank">%4$s</a></li>',
 							$schema_prop,
 							get_term_link( $cat_link->term_id, 'category' ),
-							sprintf( __( 'View all recipies in %s', 'trg_el' ), $rcu_item ),
-							$rcu_item
+							sprintf( __( 'View all recipies in %s', 'trg_el' ), $val ),
+							$val
 						);
 					}
 
@@ -151,14 +174,14 @@ if ( ! function_exists ( 'trg_el_create_diet_items' ) ) :
 					else {
 						$rcu_out .= sprintf( '<li class="cm-value">%1$s%2$s</li>',
 							$schema_prop,
-							$rcu_item
+							$val
 						);
 					}
 				}
 				else {
 					$rcu_out .= sprintf( '<li class="cm-value">%1$s%2$s</li>',
 						$schema_prop,
-						$rcu_item
+						$val
 					);
 				}
 			}
@@ -167,7 +190,7 @@ if ( ! function_exists ( 'trg_el_create_diet_items' ) ) :
 			$return_arr['html'] = $rcu_out;
 		}
 		if ( '' !== $rcu ) {
-			$return_arr['arr'] = $rcu;
+			$return_arr['arr'] = $links_arr;
 		}
 		return $return_arr;
 	}
@@ -388,6 +411,7 @@ if ( ! function_exists( 'trg_get_first_image' ) ) {
 if ( ! function_exists( 'trg_el_recipe_image' ) ) {
 	function trg_el_recipe_image( $args = array() ) {
 		$defaults = array(
+			'imgsize'			=> 'custom',
 			'img_src'           => 'featured', //media_lib, ext
 			'img_lib'           => '',
 			'imgwidth'          => '',
@@ -399,12 +423,14 @@ if ( ! function_exists( 'trg_el_recipe_image' ) ) {
 		shortcode_atts( $defaults, $args );
 		$img_obj = $image = '';
 
-		// Featured image
-		$img_args = array( intval( $args['imgwidth'] ), intval( $args['imgheight'] ) );
-		if ( $args['imgquality'] || $args['imgcrop'] ) {
-			$img_args['bfi_thumb'] = true;
-			$img_args['crop'] = $args['imgcrop'];
-			$img_args['quality'] = $args['imgquality'];
+		// Custom image resize
+		if ( 'custom' == $args['imgsize'] ) {
+			$img_args = array( intval( $args['imgwidth'] ), intval( $args['imgheight'] ) );
+			if ( $args['imgquality'] || $args['imgcrop'] ) {
+				$img_args['bfi_thumb'] = true;
+				$img_args['crop'] = $args['imgcrop'];
+				$img_args['quality'] = $args['imgquality'];
+			}
 		}
 	 	if ( 'featured' == $args['img_src'] && has_post_thumbnail() ) {
 			printf( '<div class="%srecipe-image%s">%s%s</div>',
@@ -412,7 +438,7 @@ if ( ! function_exists( 'trg_el_recipe_image' ) ) {
 				'hide' == $args['img_src'] ? ' print-only' : '',
 				get_the_post_thumbnail(
 					get_the_id(),
-					$img_args,
+					'custom' == $args['imgsize'] ? $img_args : $args['imgsize'],
 					array( 'itemprop' => 'image', 'class' => 'trg-image' )
 				),
 				'' !== get_the_post_thumbnail_caption() ? '<p class="wp-caption-text">' . get_the_post_thumbnail_caption() . '</p>' : ''
@@ -421,11 +447,12 @@ if ( ! function_exists( 'trg_el_recipe_image' ) ) {
 
 	 	elseif ( 'media_lib' == $args['img_src'] && isset( $args['img_lib']['id'] ) ) {
 	 		$image_alt = get_post_meta( $args['img_lib']['id'], '_wp_attachment_image_alt', true );
-
-			$srcset = wp_get_attachment_image_srcset( $args['img_lib']['id'], array( intval( $args['imgwidth'] ), intval( $args['imgheight'] ) ) );
+	 		$src_size = ( 'custom' == $args['imgsize'] ) ? array( intval( $args['imgwidth'] ), intval( $args['imgheight'] ) ) : $args['imgsize'];
+			$srcset = wp_get_attachment_image_srcset( $args['img_lib']['id'], $src_size );
 			$caption = trg_el_post_thumbnail_caption( $args['img_lib']['id'] );
-			$image = $args['img_lib']['url'];
-			if ( $args['imgquality'] || $args['imgcrop'] ) {
+			$image = wp_get_attachment_image_src( $args['img_lib']['id'], $src_size );
+			$image = $image[0];
+			if ( 'custom' == $args['imgsize'] && ( $args['imgquality'] || $args['imgcrop'] ) ) {
 				$image = wp_get_attachment_image_src( $args['img_lib']['id'], $img_args );
 				$image = $image[0];
 			}
@@ -439,7 +466,7 @@ if ( ! function_exists( 'trg_el_recipe_image' ) ) {
 					$args['imgwidth'] ? ' width="' . $args['imgwidth'] . '"' : '',
 					$args['imgheight'] ? ' height="' . $args['imgheight'] . '"' : '',
 					$image,
-					! ( $args['imgquality'] || $args['imgcrop'] ) ? ' srcset="' . $srcset . '"' : '',
+					! ( 'custom' == $args['imgsize'] && ( $args['imgquality'] || $args['imgcrop'] ) ) ? ' srcset="' . $srcset . '"' : '',
 					isset( $image_alt ) && '' !== $image_alt ? ' alt="' . $image_alt . '"' : ''
 				),
 				$caption_flag ? '<p class="wp-caption-text">' . $caption . '</p>' : ''
@@ -466,7 +493,7 @@ if ( ! function_exists( 'trg_el_post_thumbnail_caption' ) ) {
 /**
  * Create attributes list from user defined values
  *
- * @since 1.9.0
+ * @since 2.2.1
  */
 if ( ! function_exists ( 'trg_el_create_atts' ) ) :
 	function trg_el_create_atts( $list_other = '', $link = false ) {
@@ -515,3 +542,26 @@ if ( ! function_exists ( 'trg_el_create_atts' ) ) :
 
 	}
 endif;
+
+
+function trg_el_get_all_image_sizes() {
+	global $_wp_additional_image_sizes;
+	$image_sizes = array();
+	$default_image_sizes = get_intermediate_image_sizes();
+	foreach ( $default_image_sizes as $size ) {
+	    $image_sizes[$size] = array(
+	        'width'  => intval( get_option( "{$size}_size_w" ) ),
+	        'height' => intval( get_option( "{$size}_size_h" ) ),
+	        'crop'   => get_option( "{$size}_crop" ) ? get_option( "{$size}_crop" ) : false,
+	    );
+	}
+	if ( isset( $_wp_additional_image_sizes ) && count( $_wp_additional_image_sizes ) ) {
+	    $image_sizes = array_merge( $image_sizes, $_wp_additional_image_sizes );
+	}
+
+	$size_options = array( 'custom' => __( 'Custom', 'trg_el' ), 'full' => __( 'Full', 'trg_el' ) );
+	foreach( $image_sizes as $key => $val ) {
+		$size_options[ $key ] = $key . ' - ' . $val['width'] . 'x' . $val['height'];
+	}
+	return $size_options;
+}

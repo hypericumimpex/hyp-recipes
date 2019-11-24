@@ -4,7 +4,7 @@
  * Author:      Hypericum
  * Author URI: 	https://github.com/hypericumimpex
  * Plugin URI:  https://github.com/hypericumimpex/hyp-recipes
- * Version:     1.9.0
+ * Version:     2.2.1
  * Text Domain: trg_el
  * Domain Path: /languages/
  * Description: Extensie pt. HYP Page Builder. Pluginul te ajută să creezi retete online cu microdate Schema, tabel cu date nutritionale si microdate Schema .
@@ -16,188 +16,255 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'Total_Recipe_Generator_El' ) ) {
+    /**
+     * Main Total_Recipe_Generator_El Class
+     *
+     */
+    final class Total_Recipe_Generator_El {
+/*
+        function __construct() {
 
-	class Total_Recipe_Generator_El {
+        } // construct*/
 
-		private static $instance = null;
 
-		public static function get_instance() {
-			if ( ! self::$instance ) {
-				self::$instance = new self;
-			}
-			return self::$instance;
-		}
+        private static $instance;
 
-		function __construct() {
+        /**
+         * Main Total_Recipe_Generator_El Instance
+         *
+         */
+        public static function instance() {
 
-			// Include required files
-			add_action( 'plugins_loaded', array( &$this, 'trg_includes' ) );
+            if ( ! isset( self::$instance ) && ! ( self::$instance instanceof Total_Recipe_Generator_El ) ) {
 
-			// Load translation
-			add_action( 'init', array( &$this, 'trg_init' ) );
+                self::$instance = new Total_Recipe_Generator_El;
 
-			// Elementor Specific			
-			add_action( 'elementor/widgets/widgets_registered', array( &$this, 'trg_widgets_registered' ) );
-			add_action( 'admin_notices',  array( &$this, 'trg_install_el_notice' ) );
-			add_action( 'elementor/editor/after_enqueue_scripts', array( &$this, 'trg_admin_scripts' ) );			
-			
-			// Custom CSS in head
-			add_action( 'wp_head',  array( &$this, 'trg_add_global_css' ) );
-			add_filter( 'wp_kses_allowed_html', array( &$this, 'trg_allow_iframes_in_post' ) );
+                self::$instance->trg_el_includes();
 
-			//add_action( 'trg_el_after_nutrition', array( &$this, 'trg_add_social_links' ) );
-		}
+                self::$instance->trg_el_hooks();
 
-		// Allow iframe tag in wp_kses_allowed_html
-		function trg_allow_iframes_in_post( $allowedtags ) {
-			if ( ! current_user_can( 'publish_posts' ) ) return $allowedtags;
-			// Allow iframes and the following attributes
-			$allowedtags['iframe'] = array(
-				'align' => true,
-				'width' => true,
-				'height' => true,
-				'frameborder' => true,
-				'name' => true,
-				'src' => true,
-				'id' => true,
-				'class' => true,
-				'style' => true,
-				'scrolling' => true,
-				'marginwidth' => true,
-				'marginheight' => true,
-			);
-			return $allowedtags;
-		}
+            }
+            return self::$instance;
+        }
 
-		public function trg_add_social_links( $social ) {
-			if ( is_singular() && ( ! empty( $social['social_buttons'] ) ) ) {
-				$social_sticky = isset( $social['social_sticky'] ) && 'on' == $social['social_sticky'] ? 'true' : '';
-				if ( '' !== $social['social_heading'] ) {
-					printf( '<h3 class="trg-social-heading%s">%s</h3>',
-						$social_sticky ? ' hide-on-mobile' : '',
-						'' !== $social['social_heading'] ? esc_attr( $social['social_heading'] ) : ''
-					);
-				}
+        /**
+         * Throw error on object clone
+         *
+         */
+        public function __clone() {
+            // Cloning instances of the class is forbidden
+            _doing_it_wrong( __FUNCTION__, __( 'Not allowed.', 'trg_el' ), '1.0' );
+        }
 
-				if ( is_array( $social['social_buttons'] ) && ! empty( $social['social_buttons'] ) ) {
-					echo '<div class="trg-share-buttons">';
-					echo trg_el_social_sharing( $social['social_buttons'], $social_sticky );
-					echo '</div>';
-				}
-			}
-		}
-		
-		// Enqueue admin scripts and styles
-		function trg_admin_scripts() {
-			wp_enqueue_style( 'trg-admin-css', plugin_dir_url( __FILE__ ) . 'assets/css/trg_admin.css' );
-		}		
+        /**
+         * Disable unserializing of the class
+         *
+         */
+        public function __wakeup() {
+            // Unserializing instances of the class is forbidden
+            _doing_it_wrong( __FUNCTION__, __( 'Unserializing forbidden.', 'trg_el' ), '1.0' );
+        }
 
-		// Show notice if Elementor not installed
-		function trg_install_el_notice() {
-			if ( ! defined( 'ELEMENTOR_PLUGIN_BASE' ) ) {
-				echo sprintf( '<div class="error"><p>%s</p></div>', esc_attr__( 'Total Recipe Generator plugin requires Elementor Page Builder. Kindly install and activate Elementor plugin.', 'trg_el' ) );
-			}
-			else {
-				return;
-			}
-		}
 
-		// Include required files
-		function trg_includes() {
-			$plugin_dir = trailingslashit( plugin_dir_path( __FILE__ ) );
-			require_once( $plugin_dir . 'includes/class.settings-api.php' );
-			require_once( $plugin_dir . 'includes/settings.php' );			
-			require_once( $plugin_dir . 'includes/BFI_Thumb.php' );
-			require_once( $plugin_dir . 'includes/helper-functions.php' );
-		}
+        /**
+         * Load Plugin Text Domain
+         *
+         */
+        public function load_plugin_textdomain() {
 
-		public function trg_widgets_registered( $widgets_manager ) {
+            $lang_dir = apply_filters( 'trg_el_lang_dir', trailingslashit( plugin_dir_path(__FILE__) . 'languages' ) );
+
+            // Native WordPress plugin locale filter
+            $locale = apply_filters( 'plugin_locale', get_locale(), 'trg_el' );
+            $mofile = sprintf( '%1$s-%2$s.mo', 'trg_el', $locale );
+
+            // Paths to current locale file
+            $mofile_local = $lang_dir . $mofile;
+
+            if ( file_exists( $mofile_local ) ) {
+                // wp-content/plugins/total-recipe-generator-el/languages/ folder
+                load_textdomain( 'trg_el', $mofile_local );
+            }
+            else {
+                // Load default language files
+                load_plugin_textdomain( 'trg_el', false, $lang_dir );
+            }
+
+            return false;
+        }
+
+        public function trg_el_includes() {
+            $plugin_dir = trailingslashit( plugin_dir_path( __FILE__ ) );
+            require_once( $plugin_dir . 'includes/class.settings-api.php' );
+            require_once( $plugin_dir . 'includes/settings.php' );
+            require_once( $plugin_dir . 'includes/BFI_Thumb.php' );
+            require_once( $plugin_dir . 'includes/helper-functions.php' );
+        }
+
+        /**
+         * Setup the default hooks and actions
+         */
+        private function trg_el_hooks() {
+
+            add_action( 'plugins_loaded', array( self::$instance, 'load_plugin_textdomain' ) );
+
+            add_action( 'elementor/widgets/widgets_registered', array( self::$instance, 'include_widgets') );
+
+            add_action( 'elementor/frontend/after_register_scripts', array( $this, 'register_frontend_scripts'), 20 );
+
+            add_action( 'elementor/frontend/after_register_styles', array( self::$instance, 'register_frontend_styles' ), 10 );
+
+            add_action( 'elementor/frontend/after_enqueue_styles', array( self::$instance, 'enqueue_frontend_styles' ), 10 );
+
+            add_action( 'admin_notices',  array( self::$instance, 'trg_install_el_notice' ) );
+
+            // Custom CSS in head
+            add_action( 'wp_head',  array( self::$instance, 'trg_add_global_css' ) );
+            add_filter( 'wp_kses_allowed_html', array( self::$instance, 'trg_allow_iframes_in_post' ) );
+
+        }
+
+        public function include_widgets( $widgets_manager ) {
             require_once trailingslashit( plugin_dir_path( __FILE__ ) ) . 'includes/widget-trg.php';
-            $widgets_manager->register_widget_type( new \TotalRecipeGenerator\Widgets\Widget_Total_Recipe_Generator_El() );
-        }		
+            $widgets_manager->register_widget_type( new \Total_Recipe_Generator_El\Widgets\Widget_Total_Recipe_Generator_El() );
+        }
 
-		// Add Global CSS from plugin settings
-		function trg_add_global_css() {
-			$colors = get_option( 'trg_display' );
-			$css = '';
-			// Icon color
-			if ( isset( $colors ) && ! empty( $colors ) ) {
-				if ( '' != $colors['icon_color'] ) {
-					$css .= '.recipe-heading > .fa:before{color:' . $colors['icon_color'] . ' ;}';
-				}
+	    /**
+	     * Load Frontend Scripts
+	     *
+	     */
+	    public function register_frontend_scripts() {
 
-				if ( '' != $colors['heading_color'] ) {
-					$css .= '.recipe-heading{color:' . $colors['heading_color'] . ' !important;}';
-				}
+           // JavaScript files
+           wp_register_script( 'trg-plugin-functions', plugin_dir_url( __FILE__ ) . 'assets/js/trg_frontend.js', array( 'jquery' ), '', true );
 
-				if ( '' != $colors['label_color'] ) {
-					$css .= '.info-board>li .ib-label,.cuisine-meta .cm-label{color:' . $colors['label_color'] . ';}';
-				}
+            // Localization
+            $social = get_option( 'trg_social' );
+            $trg_localization = array(
+                'plugins_url' => plugins_url() . '/total-recipe-generator-el',
+                'prnt_header' => isset( $social['prnt_header'] ) ? $social['prnt_header'] : '',
+                'prnt_footer' => isset( $social['prnt_footer'] ) ?$social['prnt_footer'] : '',
+            );
+            wp_localize_script( 'trg-plugin-functions', 'trg_localize', $trg_localization );
+        }
 
-				if ( '' != $colors['highlights'] ) {
-					$css .= '.info-board>li .ib-value{color:' . $colors['highlights'] . ';}';
-				}
+        /**
+         * Load Frontend Styles
+         *
+         */
+        public function register_frontend_styles() {
 
-				if ( '' != $colors['tick_color'] ) {
-					$css .= '.ing-list>li .fa:before{color:' . $colors['tick_color'] . ';}';
-				}
+                wp_register_style( 'trg-plugin-css', plugin_dir_url( __FILE__ ) . 'assets/css/trg_frontend.css', array(), null );
 
-				if ( '' != $colors['count_color'] ) {
-					$css .= '.step-num{color:' . $colors['count_color'] . ';}';
-				}
+                // RTL CSS
+                if ( is_rtl() ) {
+                    wp_register_style( 'trg-plugin-rtl', plugin_dir_url( __FILE__ ) . 'assets/css/rtl_trg_frontend.css', array(), null );
+                }
 
-				// Tags links CSS
-				if ( '' != $colors['tags_bg'] || '' != $colors['tags_color'] ) {
-					$css .= '.cuisine-meta .cm-value:not(.link-enabled),.cuisine-meta .cm-value a{';
-					$css .= ( '' != $colors['tags_bg'] ) ? 'background-color:' . $colors['tags_bg'] . ' !important;' : '';
-					$css .= ( '' != $colors['tags_color'] ) ? 'color:' . $colors['tags_color'] . ' !important;' : '';
-					$css .= 'box-shadow:none !important;}';
-				}
+        }
 
-				// Tags links hover CSS
-				if ( '' != $colors['tags_bg_hover'] || '' != $colors['tags_color_hover'] ) {
-					$css .= '.cuisine-meta .cm-value a:hover,.cuisine-meta .cm-value a:active{';
-					$css .= ( '' != $colors['tags_bg_hover'] ) ? 'background-color:' . $colors['tags_bg_hover'] . ' !important;' : '';
-					$css .= ( '' != $colors['tags_color_hover'] ) ? 'color:' . $colors['tags_color_hover'] . ' !important;' : '';
-					$css .= '}';
-				}
-			}
-			if ( $css ) {
-				echo '<style id="trg_global_css" type="text/css"> ' . $css . '</style>';
-			}
-		}		
-		
-		// Init function
-		function trg_init() {
+        // Load Frontend Styles
+        public function enqueue_frontend_styles() {
 
-			// Translation
-			load_plugin_textdomain( 'trg_el', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-			
-			if ( ! is_admin() ) {
-				wp_enqueue_style( 'trg-plugin-css', plugin_dir_url( __FILE__ ) . 'assets/css/trg_frontend.css', array(), null );
+            wp_enqueue_style( 'trg-plugin-css' );
 
-				if ( is_rtl() ) {
-					wp_register_style( 'trg-plugin-rtl', plugin_dir_url( __FILE__ ) . 'assets/css/rtl_trg_frontend.css', array(), null );
-					wp_enqueue_style( 'trg-plugin-rtl' );
-				}
+            if ( is_rtl() ) {
+                wp_enqueue_style( 'trg-plugin-rtl' );
+            }
 
-				// JavaScript files
-				wp_enqueue_script( 'trg-plugin-functions', plugin_dir_url( __FILE__ ) . 'assets/js/trg_frontend.js', array( 'jquery' ), '', true );
+            wp_enqueue_script( 'trg-plugin-functions' );
 
-				// Localization
-				$social = get_option( 'trg_social' );
-				$trg_localization = array(
-					'plugins_url' => plugins_url() . '/total-recipe-generator-el',
-					'prnt_header' => isset( $social['prnt_header'] ) ? $social['prnt_header'] : '',
-					'prnt_footer' => isset( $social['prnt_footer'] ) ?$social['prnt_footer'] : '',
-				);
-				wp_localize_script('trg-plugin-functions', 'trg_localize', $trg_localization );
-			}
-		}
-	}
+        }
 
-	// Create new instance of class
-	$total_recipe_generator_el = new Total_Recipe_Generator_El();
+        // Add Global CSS from plugin settings
+        function trg_add_global_css() {
+            $colors = get_option( 'trg_display' );
+            $css = '';
+            // Icon color
+            if ( isset( $colors ) && ! empty( $colors ) ) {
+                if ( '' != $colors['icon_color'] ) {
+                    $css .= '.recipe-heading > .trg-icon:before{color:' . $colors['icon_color'] . ' ;}';
+                }
 
+                if ( '' != $colors['heading_color'] ) {
+                    $css .= '.recipe-heading{color:' . $colors['heading_color'] . ' !important;}';
+                }
+
+                if ( '' != $colors['label_color'] ) {
+                    $css .= '.info-board>li .ib-label,.cuisine-meta .cm-label{color:' . $colors['label_color'] . ';}';
+                }
+
+                if ( '' != $colors['highlights'] ) {
+                    $css .= '.info-board>li .ib-value{color:' . $colors['highlights'] . ';}';
+                }
+
+                if ( '' != $colors['tick_color'] ) {
+                    $css .= '.ing-list>li .trg-icon:before{color:' . $colors['tick_color'] . ';}';
+                }
+
+                if ( '' != $colors['count_color'] ) {
+                    $css .= '.step-num{color:' . $colors['count_color'] . ';}';
+                }
+
+                // Tags links CSS
+                if ( '' != $colors['tags_bg'] || '' != $colors['tags_color'] ) {
+                    $css .= '.cuisine-meta .cm-value:not(.link-enabled),.cuisine-meta .cm-value a{';
+                    $css .= ( '' != $colors['tags_bg'] ) ? 'background-color:' . $colors['tags_bg'] . ' !important;' : '';
+                    $css .= ( '' != $colors['tags_color'] ) ? 'color:' . $colors['tags_color'] . ' !important;' : '';
+                    $css .= 'box-shadow:none !important;}';
+                }
+
+                // Tags links hover CSS
+                if ( '' != $colors['tags_bg_hover'] || '' != $colors['tags_color_hover'] ) {
+                    $css .= '.cuisine-meta .cm-value a:hover,.cuisine-meta .cm-value a:active{';
+                    $css .= ( '' != $colors['tags_bg_hover'] ) ? 'background-color:' . $colors['tags_bg_hover'] . ' !important;' : '';
+                    $css .= ( '' != $colors['tags_color_hover'] ) ? 'color:' . $colors['tags_color_hover'] . ' !important;' : '';
+                    $css .= '}';
+                }
+            }
+            if ( $css ) {
+                echo '<style id="trg_global_css" type="text/css"> ' . $css . '</style>';
+            }
+        }
+
+        // Allow iframe tag in wp_kses_allowed_html
+        function trg_allow_iframes_in_post( $allowedtags ) {
+            if ( ! current_user_can( 'publish_posts' ) ) return $allowedtags;
+            // Allow iframes and the following attributes
+            $allowedtags['iframe'] = array(
+                'align' => true,
+                'width' => true,
+                'height' => true,
+                'frameborder' => true,
+                'name' => true,
+                'src' => true,
+                'id' => true,
+                'class' => true,
+                'style' => true,
+                'scrolling' => true,
+                'marginwidth' => true,
+                'marginheight' => true,
+            );
+            return $allowedtags;
+        }
+
+        // Show notice if Elementor not installed
+        function trg_install_el_notice() {
+            if ( ! defined( 'ELEMENTOR_PLUGIN_BASE' ) ) {
+                echo sprintf( '<div class="error"><p>%s</p></div>', esc_attr__( 'Total Recipe Generator plugin requires Elementor Page Builder. Kindly install and activate Elementor plugin.', 'trg_el' ) );
+            }
+            else {
+                return;
+            }
+        }
+    }
 } // If not class exists
-?>
+
+/**
+ * Generate Instance
+ */
+function trg_el() {
+    return Total_Recipe_Generator_El::instance();
+}
+
+trg_el();

@@ -1,6 +1,6 @@
 <?php
 
-namespace TotalRecipeGenerator\Widgets;
+namespace Total_Recipe_Generator_El\Widgets;
 
 use Elementor\Widget_Base;
 use Elementor\Controls_Manager;
@@ -8,6 +8,7 @@ use Elementor\Utils;
 use Elementor\Scheme_Color;
 use Elementor\Group_Control_Typography;
 use Elementor\Scheme_Typography;
+use Elementor\Group_Control_Image_Size;
 
 if ( ! defined( 'ABSPATH' ) )
     exit; // Exit if accessed directly
@@ -24,7 +25,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     }
 
     public function get_icon() {
-        return 'icn-restaurant_menu';
+        return 'fas fa-utensils';
     }
 
     protected function _register_controls() {
@@ -54,7 +55,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     $this->add_responsive_control(
         'method_width',
         [
-            'label' => __( 'Method section width', 'trg-el' ),
+            'label' => __( 'Method section width', 'trg_el' ),
             'type' => Controls_Manager::SLIDER,
             'size_units' => [ '%' ],
             'range' => [
@@ -72,7 +73,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
                 '{{WRAPPER}} .ingredients-section' => 'flex-basis: calc(100% - {{SIZE}}% );',
                 '{{WRAPPER}} .method-section' => 'flex-basis: {{SIZE}}%;'
             ],
-            'description' => __( 'Select width for the method section.', 'trg-el' ),
+            'description' => __( 'Select width for the method section.', 'trg_el' ),
 'condition' => [ 'template' => ['recipe2', 'recipe3'] ]
         ]
     );
@@ -80,7 +81,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     $this->add_responsive_control(
             'method_gutter',
             [
-                'label' => __( 'Method section gap', 'trg-el' ),
+                'label' => __( 'Method section gap', 'trg_el' ),
                 'label_block' => true,
                 'type' => Controls_Manager::SLIDER,
                 'size_units' => [ 'px', 'em', 'rem' ],
@@ -107,7 +108,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
                     '{{WRAPPER}} .ingredients-section, {{WRAPPER}} .method-section' => 'padding: 0 {{SIZE}}{{UNIT}};',
                     '{{WRAPPER}} .trg-row' => 'margin-left: -{{SIZE}}{{UNIT}}; margin-right: -{{SIZE}}{{UNIT}};'
                 ],
-                'description' => __( 'Select a gap width between methods section and ingredients section.', 'trg-el' ),
+                'description' => __( 'Select a gap width between methods section and ingredients section.', 'trg_el' ),
 'condition' => [ 'template' => ['recipe2', 'recipe3'] ]
             ]
         );
@@ -120,7 +121,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'prefix_class' => 'method-full-tablet-',
             'description' => __( 'Force method and ingredients section full width on tablet.', 'trg_el' )
         ]
@@ -134,7 +135,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'prefix_class' => 'method-full-mobile-',
             'description' => __( 'Force method and ingredients section full width on mobile.', 'trg_el' )
         ]
@@ -174,7 +175,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Show or hide recipe publish date.', 'trg_el' )
         ]
     );
@@ -187,7 +188,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Show or hide recipe author name.', 'trg_el' )
         ]
     );
@@ -229,6 +230,39 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     );
 
     $this->add_control(
+        'show_summary',
+        [
+            'type' => Controls_Manager::SWITCHER,
+            'label' => __( 'Recipe summary', 'trg_el' ),
+            'default' => 'true',
+            'label_on' => __( 'On', 'trg_el' ),
+            'label_off' => __( 'Off', 'trg_el' ),
+            'return_value' => 'true',
+            'description' => __( 'Show or hide recipe summary text.', 'trg_el' ),
+        ]
+    );
+
+    $this->add_control(
+        'summary',
+        [
+            'label' => __( 'Recipe Summary', 'trg_el' ),
+            'type' => Controls_Manager::WYSIWYG,
+            'default' => 'This is a recipe summary text. It can be a small excerpt about what you are going to cook.',
+            'description' => __( 'Provide a short summary or description of your recipe', 'trg_el' ),
+            'condition' => [ 'show_summary' => ['true'] ]
+        ]
+    );
+
+    $this->end_controls_section();
+
+$this->start_controls_section(
+        'section_image',
+        [
+            'label' => __('Recipe Image', 'trg_el'),
+        ]
+    );
+
+    $this->add_control(
         'img_src',
         [
             'label' => __( 'Recipe Image', 'trg_el' ),
@@ -258,23 +292,23 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     $this->add_responsive_control(
         'img_align',
         [
-            'label' => __( 'Image Align', 'trg-el' ),
+            'label' => __( 'Image Align', 'trg_el' ),
             'type' => \Elementor\Controls_Manager::CHOOSE,
             'options' => [
                 'left' => [
-                    'title' => __( 'Left', 'trg-el' ),
+                    'title' => __( 'Left', 'trg_el' ),
                     'icon' => 'fa fa-align-left',
                 ],
                 'center' => [
-                    'title' => __( 'Center', 'trg-el' ),
+                    'title' => __( 'Center', 'trg_el' ),
                     'icon' => 'fa fa-align-center',
                 ],
                 'right' => [
-                    'title' => __( 'Right', 'trg-el' ),
+                    'title' => __( 'Right', 'trg_el' ),
                     'icon' => 'fa fa-align-right',
                 ],
                 'none' => [
-                    'title' => __( 'None', 'trg-el' ),
+                    'title' => __( 'None', 'trg_el' ),
                     'icon' => 'fa fa-align-justify',
                 ],
             ],
@@ -288,7 +322,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     $this->add_responsive_control(
         'img_margin',
         [
-            'label' => __( 'Image Margin', 'trg-el' ),
+            'label' => __( 'Image Margin', 'trg_el' ),
             'type' => Controls_Manager::DIMENSIONS,
             'size_units' => [ 'px', 'em', 'rem', '%' ],
             'selectors' => [
@@ -298,44 +332,56 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
     );
 
     $this->add_control(
+        'imgsize',
+        [
+            'label' => __( 'Image Size', 'trg_el' ),
+            'type' => Controls_Manager::SELECT,
+            'options' => trg_el_get_all_image_sizes(),
+        'default' => 'custom',
+        'description' => __( 'Select image size.', 'trg_el' ),
+        ]
+    );
+
+    $this->add_control(
         'imgwidth',
         [
-            'label' => __( 'Image width', 'trg_el' ),
+            'label' => __( 'Width', 'trg_el' ),
             'type' => Controls_Manager::NUMBER,
             'default' => '',
             'min' => '10',
             'max' => '2000',
             'step' => '1',
             'description' => __( 'Provide image width (in px, without unit) for the recipe image.', 'trg_el' ),
-            'condition!' => [ 'img_src' => ['ext'] ]
+            'condition' => [ 'imgsize' => ['custom'] ]
         ]
     );
 
     $this->add_control(
         'imgheight',
         [
-            'label' => __( 'Image height', 'trg_el' ),
+            'label' => __( 'Height', 'trg_el' ),
             'type' => Controls_Manager::NUMBER,
             'default' => '',
             'min' => '10',
             'max' => '2000',
             'step' => '1',
             'description' => __( 'Provide image height (in px, without unit) for the recipe image.', 'trg_el' ),
-            'condition!' => [ 'img_src' => ['ext'] ]
+            'condition' => [ 'imgsize' => ['custom'] ]
         ]
     );
 
     $this->add_control(
         'imgquality',
         [
-            'label' => __( 'Image quality', 'trg_el' ),
+            'label' => __( 'Quality', 'trg_el' ),
             'type' => Controls_Manager::NUMBER,
             'default' => '',
             'min' => '1',
             'max' => '100',
             'step' => '1',
-            'description' => __( 'Provide image quality (in %, without unit) for the thumbnail image. Range 0 - 100', 'trg_el' )
-            ]
+            'description' => __( 'Provide image quality (in %, without unit) for the thumbnail image. Range 0 - 100', 'trg_el' ),
+            'condition' => [ 'imgsize' => ['custom'] ]
+        ]
     );
 
     $this->add_control(
@@ -346,33 +392,10 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Enable hard cropping of thumbnail image.', 'trg_el' ),
-            'condition!' => [ 'img_src' => ['ext'] ]
-        ]
-    );
-
-    $this->add_control(
-        'show_summary',
-        [
-            'type' => Controls_Manager::SWITCHER,
-            'label' => __( 'Recipe summary', 'trg_el' ),
-            'default' => 'true',
-            'label_on' => __( 'On', 'trg_el' ),
-            'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
-            'description' => __( 'Show or hide recipe summary text.', 'trg_el' ),
-        ]
-    );
-
-    $this->add_control(
-        'summary',
-        [
-            'label' => __( 'Recipe Summary', 'trg_el' ),
-            'type' => Controls_Manager::WYSIWYG,
-            'default' => 'This is a recipe summary text. It can be a small excerpt about what you are going to cook.',
-            'description' => __( 'Provide a short summary or description of your recipe', 'trg_el' ),
-            'condition' => [ 'show_summary' => ['true'] ]
+            'condition!' => [ 'img_src' => ['ext'] ],
+            'condition' => [ 'imgsize' => ['custom'] ]
         ]
     );
 
@@ -592,7 +615,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Enabling this option will show post tags. You can add tags in the "Tags" panel of post edit screen.', 'trg_el' ),
         ]
     );
@@ -623,17 +646,17 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'label' => __( 'Suitable for Diet', 'trg_el' ),
             'type' => Controls_Manager::SELECT2,
             'options' => [
-                __( 'Diabetic', 'trg_el' ) => __( 'Diabetic', 'trg_el' ),
-                __( 'Gluten Free', 'trg_el' ) => __( 'Gluten Free', 'trg_el' ),
-                __( 'Halal', 'trg_el' ) => __( 'Halal', 'trg_el' ),
-                __( 'Hindu', 'trg_el' ) => __( 'Hindu', 'trg_el' ),
-                __( 'Kosher', 'trg_el' ) => __( 'Kosher', 'trg_el' ),
-                __( 'Low Calorie', 'trg_el' ) => __( 'Low Calorie', 'trg_el' ),
-                __( 'Low Fat', 'trg_el' ) => __( 'Low Fat', 'trg_el' ),
-                __( 'Low Lactose', 'trg_el' ) => __( 'Low Lactose', 'trg_el' ),
-                __( 'Low Salt', 'trg_el' ) => __( 'Low Salt', 'trg_el' ),
-                __( 'Vegan', 'trg_el' ) => __( 'Vegan', 'trg_el' ),
-                __( 'Vegetarian', 'trg_el' ) => __( 'Vegetarian', 'trg_el' ),
+                'DiabeticDiet' => __( 'Diabetic', 'trg_el' ),
+                'GlutenFreeDiet' => __( 'Gluten Free', 'trg_el' ),
+                'HalalDiet' => __( 'Halal', 'trg_el' ),
+                'HinduDiet' => __( 'Hindu', 'trg_el' ),
+                'KosherDiet' => __( 'Kosher', 'trg_el' ),
+                'LowCalorieDiet' => __( 'Low Calorie', 'trg_el' ),
+                'LowFatDiet' => __( 'Low Fat', 'trg_el' ),
+                'LowLactoseDiet' => __( 'Low Lactose', 'trg_el' ),
+                'LowSaltDiet' => __( 'Low Salt', 'trg_el' ),
+                'VeganDiet' => __( 'Vegan', 'trg_el' ),
+                'VegetarianDiet' => __( 'Vegetarian', 'trg_el' )
             ],
             'default' => [ __( 'Vegetarian', 'trg_el' ), __( 'Low Salt', 'trg_el' ) ],
             'description' => __( 'Select diet for which this recipe is suitable. Remove selection using "ctrl + select" if not applicable.', 'trg_el' ),
@@ -739,10 +762,11 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
                 [
                     'name' => 'list',
                     'label' => __( 'Ingredients list', 'trg_el' ),
-                    'type' => Controls_Manager::TEXTAREA,
-                    'description' => __( 'Enter ingredient items, each on new line.', 'trg_el' ),
+                    'type' => Controls_Manager::WYSIWYG,
+                    'default' => "Ingredient name 1\r\nIngredient name 2",
+                    'description' => __( 'Enter ingredient items, each on new line using Shift + Enter. (Use line break, not paragraph break).', 'trg_el' ),
                 ]
-            ]
+            ],
         ]
     );
 
@@ -772,8 +796,21 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => 'true',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Enable auto numbering on method steps', 'trg_el' ),
+        ]
+    );
+
+    $this->add_control(
+        'reset_count',
+        [
+            'label' => __( 'Reset numbering', 'trg_el' ),
+            'type' => Controls_Manager::SWITCHER,
+            'default' => '',
+            'label_on' => __( 'On', 'trg_el' ),
+            'label_off' => __( 'Off', 'trg_el' ),
+            'return_value' => 'true',
+            'description' => __( 'Reset numbering for each method group.', 'trg_el' ),
         ]
     );
 
@@ -829,8 +866,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => 'true',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
-            'description' => __( 'If checked, nutrition facts section will not be displayed.', 'trg_el' ),
+            'return_value' => 'true',
+            'description' => __( 'Show or hide Nutrition facts table.', 'trg_el' ),
         ]
     );
 
@@ -860,7 +897,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Enabling this option will show standard Daily Values in the chart.', 'trg_el' ),
         ]
     );
@@ -1501,8 +1538,21 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'default' => '',
             'label_on' => __( 'On', 'trg_el' ),
             'label_off' => __( 'Off', 'trg_el' ),
-            'return_value' => __( 'true', 'trg_el' ),
+            'return_value' => 'true',
             'description' => __( 'Enabling this option will add json ld schema data in recipe container.', 'trg_el' )
+        ]
+    );
+
+    $this->add_control(
+        'website_schema',
+        [
+            'label' => __( 'Website Schema', 'trg_el' ),
+            'type' => Controls_Manager::SWITCHER,
+            'default' => '',
+            'label_on' => __( 'On', 'trg_el' ),
+            'label_off' => __( 'Off', 'trg_el' ),
+            'return_value' => 'true',
+            'description' => __( 'Add website schema. This should be off if your theme already includes website schema, or you are using an SEO plugin like Yoast for website schema.', 'trg_el' )
         ]
     );
 
@@ -1831,8 +1881,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
         [
             'label' => __( 'Ingredients Heading Icon', 'trg_el' ),
             'label_block' => true,
-            'type' => Controls_Manager::ICON,
-            'default' => 'fa fa-shopping-basket',
+            'type' => Controls_Manager::ICONS,
+            'default' => ['value' => 'fas fa-shopping-basket'],
             'description' => __( 'Choose an icon for ingredients heading.', 'trg_el' )
         ]
     );
@@ -1860,8 +1910,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
                     'size' => .75,
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .ing-title .fa' => 'margin: 0 {{SIZE}}{{UNIT}} 0 0;',
-                    '.rtl {{WRAPPER}} .ing-title .fa' => 'margin: 0 0 0 {{SIZE}}{{UNIT}};'
+                    '{{WRAPPER}} .ing-title .trg-icon' => 'margin: 0 {{SIZE}}{{UNIT}} 0 0;',
+                    '.rtl {{WRAPPER}} .ing-title .trg-icon' => 'margin: 0 0 0 {{SIZE}}{{UNIT}};'
                 ],
                 'description' => __( 'Select a gap between icon and heading.', 'trg_el' )
             ]
@@ -1873,7 +1923,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'label' => __( 'Icon color', 'trg_el' ),
             'type' => Controls_Manager::COLOR,
             'selectors' => [
-                    '{{WRAPPER}} .ing-title .fa' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .ing-title .trg-icon' => 'color: {{VALUE}};',
                 ]
         ]
     );
@@ -1923,8 +1973,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
         [
             'label' => __( 'Ingredient List Icon', 'trg_el' ),
             'label_block' => true,
-            'type' => Controls_Manager::ICON,
-            'default' => 'fa fa-check-circle',
+            'type' => Controls_Manager::ICONS,
+            'default' => ['value' => 'fas fa-check-circle'],
             'description' => __( 'Choose an icon for ingredient list.', 'trg_el' )
         ]
     );
@@ -1952,8 +2002,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
                     'size' => 12,
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .ing-list .fa' => 'margin: 0 {{SIZE}}{{UNIT}} 0 0;',
-                    '.rtl {{WRAPPER}} .ing-list .fa' => 'margin: 0 0 0 {{SIZE}}{{UNIT}};'
+                    '{{WRAPPER}} .ing-list .trg-icon' => 'margin: 0 {{SIZE}}{{UNIT}} 0 0;',
+                    '.rtl {{WRAPPER}} .ing-list .trg-icon' => 'margin: 0 0 0 {{SIZE}}{{UNIT}};'
                 ],
                 'description' => __( 'Select a gap between icon and list text.', 'trg_el' )
             ]
@@ -1965,7 +2015,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'label' => __( 'List Icon color', 'trg_el' ),
             'type' => Controls_Manager::COLOR,
             'selectors' => [
-                    '{{WRAPPER}} .ing-list .fa' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .ing-list .trg-icon' => 'color: {{VALUE}};',
                 ]
         ]
     );
@@ -2024,8 +2074,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
         [
             'label' => __( 'Method Heading Icon', 'trg_el' ),
             'label_block' => true,
-            'type' => Controls_Manager::ICON,
-            'default' => 'fa fa-cutlery',
+            'type' => Controls_Manager::ICONS,
+            'default' => ['value' => 'fas fa-utensils'],
             'description' => __( 'Choose an icon for method heading.', 'trg_el' )
         ]
     );
@@ -2053,8 +2103,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
                     'size' => .75,
                 ],
                 'selectors' => [
-                    '{{WRAPPER}} .ins-title .fa' => 'margin: 0 {{SIZE}}{{UNIT}} 0 0;',
-                    '.rtl {{WRAPPER}} .ins-title .fa' => 'margin: 0 0 0 {{SIZE}}{{UNIT}};'
+                    '{{WRAPPER}} .ins-title .trg-icon' => 'margin: 0 {{SIZE}}{{UNIT}} 0 0;',
+                    '.rtl {{WRAPPER}} .ins-title .trg-icon' => 'margin: 0 0 0 {{SIZE}}{{UNIT}};'
                 ],
                 'description' => __( 'Select a gap between icon and heading.', 'trg_el' )
             ]
@@ -2066,7 +2116,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'label' => __( 'Icon color', 'trg_el' ),
             'type' => Controls_Manager::COLOR,
             'selectors' => [
-                    '{{WRAPPER}} .ins-title .fa' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .ins-title .trg-icon' => 'color: {{VALUE}};',
                 ]
         ]
     );
@@ -2169,12 +2219,14 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             // Image specific
             'img_src'           => 'featured', //media_lib
             'img_lib'           => '',
+            'imgsize'           => 'custom',
             'imgwidth'          => '',
             'imgheight'         => '',
             'imgcrop'           => '',
             'imgquality'        => '',
             'img_align'         => 'none',
             'json_ld'           => 'true', // Whether to include JSON LD microdata
+            'website_schema'    => false,
 
             // Recipe name and summary
             'name_src'          => 'post_title', // custom
@@ -2204,6 +2256,7 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'cost_per_serving'  => '',
             'method_heading'        => __( 'Method', 'trg_el' ),
             'enable_numbering'  => 'true',
+            'reset_count'       => '',
             'other_notes'       => '',
             'social_buttons'    => '',
             'social_heading'    => '',
@@ -2212,8 +2265,8 @@ class Widget_Total_Recipe_Generator_El extends Widget_Base {
             'methods'           => null,
             'show_tags'         => '',
             'recipe_keywords'  => '',
-            'ing_icon'          => 'fa fa-shopping-bag',
-            'ing_list_icon'     => 'fa fa-check-circle',
+            'ing_icon'          => 'fas fa-shopping-basket',
+            'ing_list_icon'     => 'fas fa-check-circle',
             'method_icon'       => 'fa fa-cutlery',
 
             // Nutrition facts

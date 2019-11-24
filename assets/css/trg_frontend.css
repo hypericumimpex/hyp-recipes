@@ -2,7 +2,7 @@
  * trg_frontend.css
  *
  * @package Total_Recipe_generator
- * @version 1.9.0
+ * @version 2.2.1
  */
 
 @font-face {
@@ -264,13 +264,13 @@
 	padding: 0;
 }
 
-.recipe-heading .fa {
+.recipe-heading .trg-icon {
 	width: 1em;
 	text-align: center;
 	margin: 0 .75em 0 0;
 }
 
-.rtl .recipe-heading .fa {
+.rtl .recipe-heading .trg-icon {
 	margin: 0 0 0 .75em;
 }
 
@@ -326,7 +326,7 @@
 	list-style: none;
 }
 
-.ing-list > li .fa {
+.ing-list > li .trg-icon {
 	color: #999;
 	margin: 0 12px 0 0;
 }
